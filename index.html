@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Hava Durumu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+            --accent-color: #00d2ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #2c3e50, #000000);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            color: var(--text-color);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        /* Arama Bölümü */
+        .search {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 5px 5px 5px 20px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .search:focus-within {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .search input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search button {
+            background: var(--accent-color);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .search button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* Hava Durumu Bilgileri */
+        .weather {
+            margin-top: 30px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .weather-icon {
+            font-size: 90px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            color: #f1c40f; /* Güneş rengi varsayılan */
+        }
+
+        .temp {
+            font-size: 72px;
+            font-weight: 600;
+            letter-spacing: -2px;
+        }
+
+        .city {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Alt Detaylar */
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 30px;
+        }
+
+        .col {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        .col i {
+            font-size: 24px;
+            margin-right: 12px;
+            color: var(--accent-color);
+        }
+
+        .humidity, .wind {
+            font-size: 18px;
+            font-weight: 600;
+            display: block;
+        }
+
+        .col p:last-child {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .error {
+            background: rgba(255, 77, 77, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            border: 1px solid #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Şehir Ara..." spellcheck="false">
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        
+        <div class="error" style="display: none;">
+            <p><i class="fa-solid fa-circle-exclamation"></i> Şehir bulunamadı.</p>
+        </div>
+
+        <div class="weather" style="display: none;">
+            <i class="fa-solid fa-cloud-sun weather-icon"></i>
+            <h1 class="temp">--°C</h1>
+            <h2 class="city">Yükleniyor...</h2>
+            
+            <div class="details">
+                <div class="col">
+                    <i class="fa-solid fa-droplet"></i>
+                    <div>
+                        <span class="humidity">--%</span>
+                        <p>Nem</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <i class="fa-solid fa-wind"></i>
+                    <div>
+                        <span class="wind">-- km/h</span>
+                        <p>Rüzgar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "4527d157efff13ce56d88972e2a773a1";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        const weatherIcon = document.querySelector(".weather-icon");
+
+        async function checkWeather(city) {
+            if (!city) return;
+
+            try {
+                const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+                
+                if (!response.ok) {
+                    document.querySelector(".error").style.display = "block";
+                    document.querySelector(".weather").style.display = "none";
+                    return;
+                }
+
+                const data = await response.json();
+
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+                // İkon ve Renk Kontrolü
+                const condition = data.weather[0].main;
+                if (condition == "Clouds") {
+                    weatherIcon.className = "fa-solid fa-cloud weather-icon";
+                    weatherIcon.style.color = "#bdc3c7";
+                } else if (condition == "Clear") {
+                    weatherIcon.className = "fa-solid fa-sun weather-icon";
+                    weatherIcon.style.color = "#f1c40f";
+                } else if (condition == "Rain") {
+                    weatherIcon.className = "fa-solid fa-cloud-showers-heavy weather-icon";
+                    weatherIcon.style.color = "#3498db";
+                } else if (condition == "Drizzle") {
+                    weatherIcon.className = "fa-solid fa-cloud-sun-rain weather-icon";
+                    weatherIcon.style.color = "#3498db";
+                } else if (condition == "Mist") {
+                    weatherIcon.className = "fa-solid fa-smog weather-icon";
+                    weatherIcon.style.color = "#95a5a6";
+                }
+
+                document.querySelector(".weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+
+            } catch (error) {
+                console.error("Hata:", error);
+            }
+        }
+
+        searchBtn.addEventListener("click", () => checkWeather(searchBox.value));
+        searchBox.addEventListener("keydown", (e) => { if(e.key === "Enter") checkWeather(searchBox.value); });
+
+        checkWeather("Istanbul");
+    </script>
+</body>
+</html>
